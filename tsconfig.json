@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "outDir": "./build/",
+        "sourceMap": true,
+        "module": "commonjs",
+        "target": "es2017",
+        "jsx": "react",
+        "noImplicitAny": true,
+        "declaration": true,
+        "strictNullChecks": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": false,
+        "downlevelIteration": true,
+        "resolveJsonModule": true,
+        "baseUrl": "."
+    }
+}
