@@ -8,6 +8,7 @@
     "start": "webpack-dev-server --mode development --config-name development"
   },
   "devDependencies": {
+    "@types/gl-matrix": "^3.2.0",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "css-loader": "^1.0.1",
@@ -26,5 +27,8 @@
     "webpack-cli": "^4.9.2",
     "webpack-dev-server": "^4.9.0",
     "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.3"
   }
 }
