@@ -1,6 +1,6 @@
-import { createSquarePrimitiveBuffers } from "./buffer";
+import { createSquarePrimitiveBuffers, PrimitiveBuffers } from "./buffer";
 import { drawScene } from "./scene";
-import { setUpShaderProgram } from "./shader";
+import { setUpShaderProgram, ShaderProgramInfo } from "./shader";
 
 const CANVAS_ELEMENT_ID = "gl-canvas";
 const CANVAS_WIDTH_PX = 640;
@@ -32,7 +32,24 @@ function getGLContext(): WebGLRenderingContext | null {
     return canvas.getContext("webgl");
 }
 
-function initializeGLContext() {
+function renderLoop(
+    gl: WebGLRenderingContext,
+    programInfo: ShaderProgramInfo,
+    primitiveBuffers: PrimitiveBuffers
+) {
+    let then: number = 0;
+    const render = (nowInMS: number) => {
+        const now = nowInMS / 1000; // convert to seconds
+        const deltaTime = now - then;
+        then = now;
+
+        drawScene(gl, programInfo, primitiveBuffers, deltaTime);
+        requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+}
+
+function main() {
     const gl = getGLContext();
     // Only continue if WebGL is available and working
     if (gl === null) {
@@ -44,7 +61,8 @@ function initializeGLContext() {
     if (primitiveBuffers === null || programInfo === null) {
         return;
     }
-    drawScene(gl, programInfo, primitiveBuffers);
+
+    renderLoop(gl, programInfo, primitiveBuffers);
 }
 
-window.onload = initializeGLContext;
+window.onload = main;

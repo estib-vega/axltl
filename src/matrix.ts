@@ -25,7 +25,10 @@ export function createProjectionMatrix(gl: WebGLRenderingContext): mat4 {
     return projectionMatrix;
 }
 
-export function createModelViewMatrix(): mat4 {
+const DEGREES_PER_SECOND = 60;
+let rotation: number = 0;
+
+export function createModelViewMatrix(deltaTime: number): mat4 {
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
     const modelViewMatrix = mat4.create();
@@ -37,9 +40,12 @@ export function createModelViewMatrix(): mat4 {
                     modelViewMatrix,     // matrix to translate
                     [-0.0, 0.0, -8.0]);  // amount to translate
 
-    // mat4.rotateY(modelViewMatrix,
-    //                 modelViewMatrix,
-    //                 -45 * Math.PI / 180);
+
+    rotation += (deltaTime * DEGREES_PER_SECOND) * Math.PI / 180; // in radians
+    mat4.rotate(modelViewMatrix,
+                    modelViewMatrix,
+                    rotation,
+                    [0.0, -1.0, 0.0]);
 
     return modelViewMatrix;
 }

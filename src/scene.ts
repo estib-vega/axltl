@@ -11,11 +11,16 @@ function setupScene(gl: WebGLRenderingContext) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
-export function drawScene(gl: WebGLRenderingContext, programInfo: ShaderProgramInfo, primitiveBuffers: PrimitiveBuffers) {
+export function drawScene(
+    gl: WebGLRenderingContext,
+    programInfo: ShaderProgramInfo,
+    primitiveBuffers: PrimitiveBuffers,
+    deltaTime: number
+) {
     setupScene(gl);
 
     const projectionMatrix = createProjectionMatrix(gl);
-    const modelViewMatrix = createModelViewMatrix();
+    const modelViewMatrix = createModelViewMatrix(deltaTime);
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
