@@ -1,7 +1,23 @@
 const CANVAS_ELEMENT_ID = "gl-canvas";
+const CANVAS_WIDTH_PX = 640;
+const CANVAS_HEIGHT_PX = 640;
 
 function getCanvasElement(): HTMLCanvasElement | null {
-    return document.getElementById(CANVAS_ELEMENT_ID) as HTMLCanvasElement | null;
+    const canvas = document.getElementById(CANVAS_ELEMENT_ID) as HTMLCanvasElement | null;
+    if (canvas === null) {
+        return null;
+    }
+    const desiredCSSWidth = CANVAS_WIDTH_PX;
+    const desiredCSSHeight = CANVAS_HEIGHT_PX;
+    const devicePixelRatio = window.devicePixelRatio || 1;
+
+    canvas.width  = desiredCSSWidth  * devicePixelRatio;
+    canvas.height = desiredCSSHeight * devicePixelRatio;
+
+    canvas.style.width  = desiredCSSWidth  + "px";
+    canvas.style.height = desiredCSSHeight + "px";
+
+    return canvas;
 }
 
 function getGLContext(): WebGLRenderingContext | null {
