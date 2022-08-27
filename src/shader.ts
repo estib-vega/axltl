@@ -58,6 +58,7 @@ export interface ShaderProgramInfo {
     program: WebGLProgram;
     attribLocations: {
         vertexPosition: GLint;
+        vertexColor: GLint;
     };
     uniformLocations: {
         projectionMatrix: WebGLUniformLocation | null;
@@ -67,10 +68,10 @@ export interface ShaderProgramInfo {
 
 export function setUpShaderProgram(gl: WebGLRenderingContext): ShaderProgramInfo | null {
     // Vertex shader program
-    const vsSource = ShaderSources.Vertex.SimplePosition;
+    const vsSource = ShaderSources.Vertex.SimplePositionAndColor;
 
     // Fragment shader program
-    const fsSource = ShaderSources.Fragment.SimpleWhite;
+    const fsSource = ShaderSources.Fragment.SimpleColor;
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
     if (shaderProgram === null) {
@@ -81,6 +82,7 @@ export function setUpShaderProgram(gl: WebGLRenderingContext): ShaderProgramInfo
         program: shaderProgram,
         attribLocations: {
             vertexPosition: gl.getAttribLocation(shaderProgram, "aVertexPosition"),
+            vertexColor: gl.getAttribLocation(shaderProgram, "aVertexColor"),
         },
         uniformLocations: {
             projectionMatrix: gl.getUniformLocation(shaderProgram, "uProjectionMatrix"),
