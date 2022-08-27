@@ -1,3 +1,4 @@
+import * as ShaderSources from "./shaderSources";
 /**
  * Creates a shader of the given type, uploads the source and
  * compiles it.
@@ -66,23 +67,10 @@ export interface ShaderProgramInfo {
 
 export function setUpShaderProgram(gl: WebGLRenderingContext): ShaderProgramInfo | null {
     // Vertex shader program
-    const vsSource = `
-    attribute vec4 aVertexPosition;
-
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-
-    void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-    }
-    `;
+    const vsSource = ShaderSources.Vertex.SimplePosition;
 
     // Fragment shader program
-    const fsSource = `
-    void main() {
-      gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-  `;
+    const fsSource = ShaderSources.Fragment.SimpleWhite;
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
     if (shaderProgram === null) {
