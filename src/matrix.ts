@@ -42,10 +42,11 @@ export function createModelViewMatrix(deltaTime: number): mat4 {
 
 
     rotation += (deltaTime * DEGREES_PER_SECOND) * Math.PI / 180; // in radians
+
     mat4.rotate(modelViewMatrix,
                     modelViewMatrix,
                     rotation,
-                    [0.0, -1.0, 0.0]);
+                    [0.5, -1.0, 0.3]);
 
     return modelViewMatrix;
 }
