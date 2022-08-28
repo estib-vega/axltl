@@ -1,4 +1,4 @@
-import { createSquarePrimitiveBuffers, PrimitiveBuffers } from "./buffer";
+import { createCubePrimitiveBuffers, PrimitiveBuffers } from "./buffer";
 import { drawScene } from "./scene";
 import { setUpShaderProgram, ShaderProgramInfo } from "./shader";
 
@@ -56,7 +56,7 @@ function main() {
         alert("Unable to initialize WebGL. Your browser or machine may not support it.");
         return;
     }
-    const primitiveBuffers = createSquarePrimitiveBuffers(gl);
+    const primitiveBuffers = createCubePrimitiveBuffers(gl);
     const programInfo = setUpShaderProgram(gl);
     if (primitiveBuffers === null || programInfo === null) {
         return;

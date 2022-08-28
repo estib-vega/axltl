@@ -63,6 +63,9 @@ export function drawScene(
             programInfo.attribLocations.vertexColor);
     }
 
+    // Tell WebGL which indices to use to index the vertices
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, primitiveBuffers.indices);
+
     // Tell WebGL to use our program when drawing
     gl.useProgram(programInfo.program);
 
@@ -77,7 +80,8 @@ export function drawScene(
         modelViewMatrix);
 
 
+    const vertexCount = 36;
+    const type = gl.UNSIGNED_SHORT;
     const arrayOffset = 0;
-    const vertexCount = 4;
-    gl.drawArrays(gl.TRIANGLE_STRIP, arrayOffset, vertexCount);
+    gl.drawElements(gl.TRIANGLES, vertexCount, type, arrayOffset);
 }
