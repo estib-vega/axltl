@@ -6,7 +6,11 @@ const CANVAS_ELEMENT_ID = "gl-canvas";
 const CANVAS_WIDTH_PX = 640;
 const CANVAS_HEIGHT_PX = 640;
 
-function getCanvasElement(): HTMLCanvasElement | null {
+interface CreateCanvasParams {
+    onVerticalScroll: (delta: number) => void;
+}
+
+function getCanvasElement(params: CreateCanvasParams): HTMLCanvasElement | null {
     const canvas = document.getElementById(CANVAS_ELEMENT_ID) as HTMLCanvasElement | null;
     if (canvas === null) {
         return null;
@@ -21,11 +25,16 @@ function getCanvasElement(): HTMLCanvasElement | null {
     canvas.style.width  = desiredCSSWidth  + "px";
     canvas.style.height = desiredCSSHeight + "px";
 
+    canvas.addEventListener("wheel", (event) => {
+        params.onVerticalScroll(event.deltaY);
+        event.stopPropagation();
+    });
+
     return canvas;
 }
 
-function getGLContext(): WebGLRenderingContext | null {
-    const canvas = getCanvasElement();
+function getGLContext(params: CreateCanvasParams): WebGLRenderingContext | null {
+    const canvas = getCanvasElement(params);
     if (canvas === null) {
         return null;
     }
@@ -49,7 +58,9 @@ function renderLoop(
 
 function main() {
     const scene = SceneManager.instance();
-    const gl = getGLContext();
+    const gl = getGLContext({
+        onVerticalScroll: (d) => scene.zoom(d),
+    });
 
     // Only continue if WebGL is available and working
     if (gl === null) {

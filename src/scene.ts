@@ -5,6 +5,10 @@ import { ShaderProgramInfo } from "./shader";
 import { mat4 } from "gl-matrix";
 
 const DEGREES_PER_SECOND = 100;
+const INITIAL_Z_OFFSET = -8.0;
+const MIN_Z_OFFSET = -10;
+const MAX_Z_OFFSET = -4.5;
+const Z_OFFSET_SPEED = 0.05;
 
 interface SceneMatrices {
     projectionMatrix: mat4;
@@ -14,12 +18,14 @@ interface SceneMatrices {
 export default class SceneManager {
     private static singleInstance: SceneManager | undefined = undefined;
 
+    private zOffset: number;
     private rotationRad: number;
     private initialized: boolean;
     private gl: WebGLRenderingContext | undefined;
 
 
     private constructor() {
+        this.zOffset = INITIAL_Z_OFFSET;
         this.rotationRad = 0;
         this.initialized = false;
         this.gl = undefined;
@@ -46,6 +52,13 @@ export default class SceneManager {
         }
         this.gl = gl;
         this.initialized = true;
+    }
+
+    /**
+     * Update the Z-axis offset.
+     */
+    zoom(delta: number) {
+        this.zOffset = Util.clamp(this.zOffset + delta * Z_OFFSET_SPEED, MIN_Z_OFFSET, MAX_Z_OFFSET);
     }
 
     /**
@@ -80,10 +93,10 @@ export default class SceneManager {
 
         const rotation: Mat.Rotation = {
             radians: this.rotationRad,
-            axis: { x: 0.5, y: -1.0, z: 0.3 },
+            axis: { x: 0.5, y: -1.0, z: 0 },
         }
         const translation: Mat.Translation = {
-            vector: { x: 0, y: 0, z: -8.0 },
+            vector: { x: 0, y: 0, z: this.zOffset },
         }
         const modelViewMatrix = Mat.createModelViewMatrix({ rotation, translation });
         return { projectionMatrix, modelViewMatrix };
