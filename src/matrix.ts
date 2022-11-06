@@ -1,4 +1,7 @@
 import { mat4 } from "gl-matrix";
+import * as Util from "./util";
+
+const FOV_ANGLE = 45;
 
 /**
  * Create a perspective matrix, a special matrix that is
@@ -10,7 +13,7 @@ export function createProjectionMatrix(gl: WebGLRenderingContext): mat4 {
     // and we only want to see objects between 0.1 units
     // and 100 units away from the camera.
 
-    const fieldOfView = 45 * Math.PI / 180;   // in radians
+    const fieldOfView = Util.toRadians(FOV_ANGLE);
     const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
     const zNear = 0.1;
     const zFar = 100.0;
@@ -25,10 +28,25 @@ export function createProjectionMatrix(gl: WebGLRenderingContext): mat4 {
     return projectionMatrix;
 }
 
-const DEGREES_PER_SECOND = 60;
-let rotation: number = 0;
+// ######################################################################
+// ######################################################################
+// MODEL VIEW MATRIX
 
-export function createModelViewMatrix(deltaTime: number): mat4 {
+export interface Rotation {
+    radians: number;
+    axis: Util.Vec3;
+}
+
+export interface Translation {
+    vector: Util.Vec3;
+}
+
+export interface ModelViewMatrixParams {
+    translation: Translation;
+    rotation: Rotation;
+}
+
+export function createModelViewMatrix(params: ModelViewMatrixParams): mat4 {
     // Set the drawing position to the "identity" point, which is
     // the center of the scene.
     const modelViewMatrix = mat4.create();
@@ -38,15 +56,12 @@ export function createModelViewMatrix(deltaTime: number): mat4 {
 
     mat4.translate(modelViewMatrix,     // destination matrix
                     modelViewMatrix,     // matrix to translate
-                    [-0.0, 0.0, -8.0]);  // amount to translate
-
-
-    rotation += (deltaTime * DEGREES_PER_SECOND) * Math.PI / 180; // in radians
+                    Util.vec2Array(params.translation.vector));  // amount to translate
 
     mat4.rotate(modelViewMatrix,
                     modelViewMatrix,
-                    rotation,
-                    [0.5, -1.0, 0.3]);
+                    params.rotation.radians,
+                    Util.vec2Array(params.rotation.axis));
 
     return modelViewMatrix;
 }

@@ -1,6 +1,9 @@
+import * as Mat from "./matrix";
+import * as Util from "./util";
 import { PrimitiveBuffers } from "./buffer";
-import { createModelViewMatrix, createProjectionMatrix } from "./matrix";
 import { ShaderProgramInfo } from "./shader";
+
+const DEGREES_PER_SECOND = 100;
 
 function setupScene(gl: WebGLRenderingContext) {
     gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Set clear color to black, fully opaque
@@ -11,6 +14,8 @@ function setupScene(gl: WebGLRenderingContext) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 }
 
+let rotationRad: number = 0;
+
 export function drawScene(
     gl: WebGLRenderingContext,
     programInfo: ShaderProgramInfo,
@@ -19,8 +24,26 @@ export function drawScene(
 ) {
     setupScene(gl);
 
-    const projectionMatrix = createProjectionMatrix(gl);
-    const modelViewMatrix = createModelViewMatrix(deltaTime);
+    const projectionMatrix = Mat.createProjectionMatrix(gl);
+
+    rotationRad += Util.toRadians(deltaTime * DEGREES_PER_SECOND);
+
+    const rotation: Mat.Rotation = {
+        radians: rotationRad,
+        axis: {
+            x: 0.5,
+            y: -1.0,
+            z: 0.3
+        }
+    }
+    const translation: Mat.Translation = {
+        vector: {
+            x: 0,
+            y: 0,
+            z: -8.0
+        }
+    }
+    const modelViewMatrix = Mat.createModelViewMatrix({ rotation, translation });
 
     // Tell WebGL how to pull out the positions from the position
     // buffer into the vertexPosition attribute.
