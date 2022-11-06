@@ -1,6 +1,6 @@
-import { createCubePrimitiveBuffers, PrimitiveBuffers } from "./buffer";
-import { drawScene } from "./scene";
-import { setUpShaderProgram, ShaderProgramInfo } from "./shader";
+import { createCubePrimitiveBuffers } from "./buffer";
+import SceneManager from "./scene";
+import { setUpShaderProgram } from "./shader";
 
 const CANVAS_ELEMENT_ID = "gl-canvas";
 const CANVAS_WIDTH_PX = 640;
@@ -33,9 +33,7 @@ function getGLContext(): WebGLRenderingContext | null {
 }
 
 function renderLoop(
-    gl: WebGLRenderingContext,
-    programInfo: ShaderProgramInfo,
-    primitiveBuffers: PrimitiveBuffers
+    drawFrame: (deltaTime: number) => void
 ) {
     let then: number = 0;
     const render = (nowInMS: number) => {
@@ -43,26 +41,30 @@ function renderLoop(
         const deltaTime = now - then;
         then = now;
 
-        drawScene(gl, programInfo, primitiveBuffers, deltaTime);
+        drawFrame(deltaTime);
         requestAnimationFrame(render);
     };
     requestAnimationFrame(render);
 }
 
 function main() {
+    const scene = SceneManager.instance();
     const gl = getGLContext();
+
     // Only continue if WebGL is available and working
     if (gl === null) {
         alert("Unable to initialize WebGL. Your browser or machine may not support it.");
         return;
     }
+
     const primitiveBuffers = createCubePrimitiveBuffers(gl);
     const programInfo = setUpShaderProgram(gl);
     if (primitiveBuffers === null || programInfo === null) {
         return;
     }
 
-    renderLoop(gl, programInfo, primitiveBuffers);
+    scene.init(gl);
+    renderLoop((deltaTime) => scene.drawScene(deltaTime, programInfo, primitiveBuffers));
 }
 
 window.onload = main;
