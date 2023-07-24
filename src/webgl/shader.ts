@@ -1,4 +1,4 @@
-import * as ShaderSources from "./shaderSources";
+import * as ShaderSources from "../shaderSources";
 /**
  * Creates a shader of the given type, uploads the source and
  * compiles it.

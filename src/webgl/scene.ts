@@ -1,5 +1,4 @@
-import * as Mat from "./matrix";
-import * as Util from "./util";
+import * as Util from "../util";
 import { PrimitiveBuffers } from "./buffer";
 import { ShaderProgramInfo } from "./shader";
 import { mat4 } from "gl-matrix";
@@ -88,17 +87,17 @@ export default class SceneManager {
         if (this.gl === undefined) {
             throw new Error("Attempting to create matrices without WebGL rendering context!");
         }
-        const projectionMatrix = Mat.createProjectionMatrix(this.gl);
+        const projectionMatrix = Util.createProjectionMatrix(this.gl.canvas.width, this.gl.canvas.height);
         this.rotationRad += Util.toRadians(deltaTime * DEGREES_PER_SECOND);
 
-        const rotation: Mat.Rotation = {
+        const rotation: Util.Rotation = {
             radians: this.rotationRad,
             axis: { x: 0.5, y: -1.0, z: 0 },
         }
-        const translation: Mat.Translation = {
+        const translation: Util.Translation = {
             vector: { x: 0, y: 0, z: this.zOffset },
         }
-        const modelViewMatrix = Mat.createModelViewMatrix({ rotation, translation });
+        const modelViewMatrix = Util.createModelViewMatrix({ rotation, translation });
         return { projectionMatrix, modelViewMatrix };
     }
 
