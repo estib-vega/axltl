@@ -1,4 +1,8 @@
-export function createPipeline(
+
+/**
+ * Describe and create the render pipeline.
+ */
+export function createRenderPipeline(
   device: GPUDevice,
   shaderModule: GPUShaderModule,
   textureFormat: GPUTextureFormat

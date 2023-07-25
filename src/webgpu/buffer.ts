@@ -16,10 +16,7 @@ export interface VertexBufferInfo {
  * @param information Array of numeric values representing position or color information
  * @returns
  */
-function initVertexBuffer(
-  device: GPUDevice,
-  information: number[]
-): GPUBuffer {
+function initVertexBuffer(device: GPUDevice, information: number[]): GPUBuffer {
   const vertices = new Float32Array(information);
 
   //  We give it a size equal to the length of the vertices array so it can contain all the data,
@@ -39,57 +36,82 @@ function initVertexBuffer(
 }
 
 export function createCubeVertexBuffer(device: GPUDevice): VertexBufferInfo {
-
   const information = [
     // Positions ------------ Colors
     // Front face           White
-    1, -1, 1, 1,   1.0, 1.0, 1.0, 1.0,
-    -1, -1, 1, 1,  1.0, 1.0, 1.0, 1.0,
-    -1, -1, -1, 1, 1.0, 1.0, 1.0, 1.0,
-    1, -1, -1, 1,  1.0, 1.0, 1.0, 1.0,
-    1, -1, 1, 1,   1.0, 1.0, 1.0, 1.0,
-    -1, -1, -1, 1, 1.0, 1.0, 1.0, 1.0,
+    1, -1, 1, 1, 1.0, 1.0, 1.0, 1.0, -1, -1, 1, 1, 1.0, 1.0, 1.0, 1.0, -1, -1,
+    -1, 1, 1.0, 1.0, 1.0, 1.0, 1, -1, -1, 1, 1.0, 1.0, 1.0, 1.0, 1, -1, 1, 1,
+    1.0, 1.0, 1.0, 1.0, -1, -1, -1, 1, 1.0, 1.0, 1.0, 1.0,
 
     // Back face            Red
-    1, 1, 1, 1,    1.0, 0.0, 0.0, 1.0,
-    1, -1, 1, 1,   1.0, 0.0, 0.0, 1.0,
-    1, -1, -1, 1,  1.0, 0.0, 0.0, 1.0,
-    1, 1, -1, 1,   1.0, 0.0, 0.0, 1.0,
-    1, 1, 1, 1,    1.0, 0.0, 0.0, 1.0,
-    1, -1, -1, 1,  1.0, 0.0, 0.0, 1.0,
+    1, 1, 1, 1, 1.0, 0.0, 0.0, 1.0, 1, -1, 1, 1, 1.0, 0.0, 0.0, 1.0, 1, -1, -1,
+    1, 1.0, 0.0, 0.0, 1.0, 1, 1, -1, 1, 1.0, 0.0, 0.0, 1.0, 1, 1, 1, 1, 1.0,
+    0.0, 0.0, 1.0, 1, -1, -1, 1, 1.0, 0.0, 0.0, 1.0,
 
     // Top face             Green
-    -1, 1, 1, 1,     0.0, 1.0, 0.0, 1.0,
-    1, 1, 1, 1,      0.0, 1.0, 0.0, 1.0,
-    1, 1, -1, 1,     0.0, 1.0, 0.0, 1.0,
-    -1, 1, -1, 1,    0.0, 1.0, 0.0, 1.0,
-    -1, 1, 1, 1,     0.0, 1.0, 0.0, 1.0,
-    1, 1, -1, 1,     0.0, 1.0, 0.0, 1.0,
+    -1, 1, 1, 1, 0.0, 1.0, 0.0, 1.0, 1, 1, 1, 1, 0.0, 1.0, 0.0, 1.0, 1, 1, -1,
+    1, 0.0, 1.0, 0.0, 1.0, -1, 1, -1, 1, 0.0, 1.0, 0.0, 1.0, -1, 1, 1, 1, 0.0,
+    1.0, 0.0, 1.0, 1, 1, -1, 1, 0.0, 1.0, 0.0, 1.0,
 
     // Bottom face          Blue
-    -1, -1, 1, 1,  0.0, 0.0, 1.0, 1.0,
-    -1, 1, 1, 1,   0.0, 0.0, 1.0, 1.0,
-    -1, 1, -1, 1,  0.0, 0.0, 1.0, 1.0,
-    -1, -1, -1, 1, 0.0, 0.0, 1.0, 1.0,
-    -1, -1, 1, 1,  0.0, 0.0, 1.0, 1.0,
-    -1, 1, -1, 1,  0.0, 0.0, 1.0, 1.0,
+    -1, -1, 1, 1, 0.0, 0.0, 1.0, 1.0, -1, 1, 1, 1, 0.0, 0.0, 1.0, 1.0, -1, 1,
+    -1, 1, 0.0, 0.0, 1.0, 1.0, -1, -1, -1, 1, 0.0, 0.0, 1.0, 1.0, -1, -1, 1, 1,
+    0.0, 0.0, 1.0, 1.0, -1, 1, -1, 1, 0.0, 0.0, 1.0, 1.0,
 
     // Right face           Yellow
-    1, 1, 1, 1,    1.0, 1.0, 0.0, 1.0,
-    -1, 1, 1, 1,   1.0, 1.0, 0.0, 1.0,
-    -1, -1, 1, 1,  1.0, 1.0, 0.0, 1.0,
-    -1, -1, 1, 1,  1.0, 1.0, 0.0, 1.0,
-    1, -1, 1, 1,   1.0, 1.0, 0.0, 1.0,
-    1, 1, 1, 1,    1.0, 1.0, 0.0, 1.0,
+    1, 1, 1, 1, 1.0, 1.0, 0.0, 1.0, -1, 1, 1, 1, 1.0, 1.0, 0.0, 1.0, -1, -1, 1,
+    1, 1.0, 1.0, 0.0, 1.0, -1, -1, 1, 1, 1.0, 1.0, 0.0, 1.0, 1, -1, 1, 1, 1.0,
+    1.0, 0.0, 1.0, 1, 1, 1, 1, 1.0, 1.0, 0.0, 1.0,
 
     // Left face            Purple
-    1, -1, -1, 1,  1.0, 0.0, 1.0, 1.0,
-    -1, -1, -1, 1, 1.0, 0.0, 1.0, 1.0,
-    -1, 1, -1, 1,  1.0, 0.0, 1.0, 1.0,
-    1, 1, -1, 1,   1.0, 0.0, 1.0, 1.0,
-    1, -1, -1, 1,  1.0, 0.0, 1.0, 1.0,
-    -1, 1, -1, 1,  1.0, 0.0, 1.0, 1.0,
+    1, -1, -1, 1, 1.0, 0.0, 1.0, 1.0, -1, -1, -1, 1, 1.0, 0.0, 1.0, 1.0, -1, 1,
+    -1, 1, 1.0, 0.0, 1.0, 1.0, 1, 1, -1, 1, 1.0, 0.0, 1.0, 1.0, 1, -1, -1, 1,
+    1.0, 0.0, 1.0, 1.0, -1, 1, -1, 1, 1.0, 0.0, 1.0, 1.0,
   ];
   const vertexBuffer = initVertexBuffer(device, information);
   return { vertexBuffer, vertexCount: information.length / 8 };
+}
+
+interface BoundUniformBuffer {
+  write: (values: Float32Array) => void;
+  bindGroup: GPUBindGroup;
+}
+
+export function createBoundUniformBuffer(
+  device: GPUDevice,
+  renderPipeline: GPURenderPipeline,
+  bindGroupIndex: number,
+  bindingIndex: number,
+  bufferSize: number
+): BoundUniformBuffer {
+  const uniformBuffer = device.createBuffer({
+    size: bufferSize,
+    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+  });
+
+  const bindGroup = device.createBindGroup({
+    layout: renderPipeline.getBindGroupLayout(bindGroupIndex),
+    entries: [
+      {
+        binding: bindingIndex,
+        resource: {
+          buffer: uniformBuffer,
+        },
+      },
+    ],
+  });
+
+  const write = (values: Float32Array) =>
+    device.queue.writeBuffer(
+      uniformBuffer,
+      0,
+      values.buffer,
+      values.byteOffset,
+      values.byteLength
+    );
+
+  return {
+    write,
+    bindGroup,
+  };
 }

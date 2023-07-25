@@ -1,14 +1,16 @@
 import { CreateCanvasParams, getCanvasElement } from "src/util/dom";
-import { createPipeline as createRenderPipeline } from "./pipeline";
-import { createCubeVertexBuffer } from "./buffer";
-import { mat4, vec3 } from "gl-matrix";
+import { createRenderPipeline } from "./pipeline";
+import { createBoundUniformBuffer, createCubeVertexBuffer } from "./buffer";
+import { mat4 } from "gl-matrix";
 import {
   Rotation,
   Translation,
   createModelViewMatrix,
   createProjectionMatrix,
+  getTransformationMetrixFloatArray,
   toRadians,
 } from "src/util";
+import { getRenderPassDescriptorFactory, renderPass } from "./renderPass";
 
 const shaders = `
 struct Uniforms {
@@ -40,32 +42,61 @@ fn fragment_main(fragData: VertexOut) -> @location(0) vec4f
 `;
 
 interface RenderContext {
+  /**
+   * Canvas element to render to.
+   */
   canvas: HTMLCanvasElement;
+  /**
+   * Configured rendering context.
+   */
   context: GPUCanvasContext;
+  /**
+   * The devices preferred texture format.
+   */
+  prefferedFormat: GPUTextureFormat;
 }
 
-function getGPUContext(params: CreateCanvasParams): RenderContext | null {
+/**
+ * Retrieve the GPU rendering context.
+ *
+ * Will return `null` if either the canvas element or the WebGPU context can't be found.
+ */
+function getGPUContext(
+  device: GPUDevice,
+  params: CreateCanvasParams
+): RenderContext | null {
   const canvas = getCanvasElement(params);
   const context = canvas?.getContext("webgpu");
   if (!canvas || !context) {
     return null;
   }
-  return { context, canvas };
+
+  const prefferedFormat = navigator.gpu.getPreferredCanvasFormat();
+
+  context.configure({
+    device: device,
+    format: prefferedFormat,
+    alphaMode: "premultiplied",
+  });
+
+  return { context, canvas, prefferedFormat };
 }
 
-export async function webgpuMain() {
+/**
+ * Retrieve the GPU logical device.
+ */
+async function getGPUDevice(): Promise<GPUDevice> {
   const adapter = await navigator.gpu.requestAdapter();
   if (!adapter) {
     throw Error("Couldn't request WebGPU adapter.");
   }
 
-  const device = await adapter.requestDevice();
+  return adapter.requestDevice();
+}
 
-  const shaderModule = device.createShaderModule({
-    code: shaders,
-  });
-
-  const renderContext = getGPUContext({ onVerticalScroll: () => {} });
+export async function webgpuMain() {
+  const device = await getGPUDevice();
+  const renderContext = getGPUContext(device, { onVerticalScroll: () => {} });
 
   // Only continue if WebGL is available and working
   if (renderContext === null) {
@@ -75,119 +106,61 @@ export async function webgpuMain() {
     return;
   }
 
-  const devicePixelRatio = window.devicePixelRatio ?? 1;
-  renderContext.canvas.width =
-    renderContext.canvas.clientWidth * devicePixelRatio;
-  renderContext.canvas.height =
-    renderContext.canvas.clientHeight * devicePixelRatio;
-
-  const prefferedFormat = navigator.gpu.getPreferredCanvasFormat();
-
-  renderContext.context.configure({
-    device: device,
-    format: prefferedFormat,
-    alphaMode: "premultiplied",
+  const shaderModule = device.createShaderModule({
+    code: shaders,
   });
 
   const renderPipeline = createRenderPipeline(
     device,
     shaderModule,
-    prefferedFormat
+    renderContext.prefferedFormat
   );
 
-  const clearColor = { r: 0.0, g: 0.0, b: 0.0, a: 1.0 };
-
-  const depthTexture = device.createTexture({
-    size: [renderContext.canvas.width, renderContext.canvas.height],
-    format: "depth24plus",
-    usage: GPUTextureUsage.RENDER_ATTACHMENT,
-  });
-
   const uniformBufferSize = 4 * 16; // 4x4 matrix
-  const uniformBuffer = device.createBuffer({
-    size: uniformBufferSize,
-    usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-  });
+  const uniform = createBoundUniformBuffer(
+    device,
+    renderPipeline,
+    0,
+    0,
+    uniformBufferSize
+  );
 
-  const uniformBindGroup = device.createBindGroup({
-    layout: renderPipeline.getBindGroupLayout(0),
-    entries: [
-      {
-        binding: 0,
-        resource: {
-          buffer: uniformBuffer,
-        },
-      },
-    ],
-  });
-
-  const renderPassDescriptor: GPURenderPassDescriptor = {
-    colorAttachments: [
-      {
-        clearValue: clearColor,
-        loadOp: "clear",
-        storeOp: "store",
-        view: renderContext.context.getCurrentTexture().createView(),
-      },
-    ],
-    depthStencilAttachment: {
-      view: depthTexture.createView(),
-
-      depthClearValue: 1.0,
-      depthLoadOp: "clear",
-      depthStoreOp: "store",
-    },
-  };
-
-  const projectionMatrix = createProjectionMatrix(
+  const getRenderPassDescriptor = getRenderPassDescriptorFactory(
+    device,
     renderContext.canvas.width,
     renderContext.canvas.height
   );
-
   let angle = 0;
 
-  const getTransformationMetrix = (): Float32Array => {
+  const vertex = createCubeVertexBuffer(device);
+
+  function frame() {
     const rotation: Rotation = {
       radians: toRadians(angle),
-      axis: { x: 0.5, y: -1.0, z: 0 },
+      axis: { x: 0.5, y: -1.0, z: 0.7 },
     };
     const translation: Translation = {
       vector: { x: 0, y: 0, z: -7 },
     };
-    const modelViewMatrix = createModelViewMatrix({ rotation, translation });
+    const transformationMatrix = getTransformationMetrixFloatArray({
+      width: renderContext!.canvas.width,
+      height: renderContext!.canvas.height,
+      rotation,
+      translation,
+    });
 
-    const modelViewProjectionMatrix = mat4.create();
-    mat4.multiply(modelViewProjectionMatrix, projectionMatrix, modelViewMatrix);
+    uniform.write(transformationMatrix);
+
+    renderPass({
+      device,
+      renderPipeline,
+      getRenderPassDescriptor: () =>
+        getRenderPassDescriptor(renderContext!.context),
+      uniformBindGroup: uniform.bindGroup,
+      vertex,
+    });
 
     angle += 2;
-    return new Float32Array(
-      modelViewProjectionMatrix.values()
-    );
-  };
-
-  const { vertexBuffer, vertexCount } = createCubeVertexBuffer(device);
-
-  function frame() {
-    const transformationMatrix = getTransformationMetrix();
-    device.queue.writeBuffer(
-      uniformBuffer,
-      0,
-      transformationMatrix,
-      0,
-      transformationMatrix.length
-    );
-    (renderPassDescriptor.colorAttachments as any)[0].view =
-      renderContext!.context.getCurrentTexture().createView();
-
-    const commandEncoder = device.createCommandEncoder();
-    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    passEncoder.setPipeline(renderPipeline);
-    passEncoder.setBindGroup(0, uniformBindGroup);
-    passEncoder.setVertexBuffer(0, vertexBuffer);
-    passEncoder.draw(vertexCount, 1, 0, 0);
-    passEncoder.end();
-    device.queue.submit([commandEncoder.finish()]);
-
     requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
