@@ -33,6 +33,18 @@ interface RenderContext {
 }
 
 /**
+ * Retrieve the GPU logical device.
+ */
+async function getGPUDevice(): Promise<GPUDevice> {
+  const adapter = await navigator.gpu.requestAdapter();
+  if (!adapter) {
+    throw Error("Couldn't request WebGPU adapter.");
+  }
+
+  return adapter.requestDevice();
+}
+
+/**
  * Retrieve the GPU rendering context.
  *
  * Will return `null` if either the canvas element or the WebGPU context can't be found.
@@ -68,6 +80,7 @@ function getGPUContext(
  * Render engine instance
  */
 export default class Engine {
+  private static singleInstance: Engine | undefined = undefined;
   private device: GPUDevice;
   private canvas: HTMLCanvasElement;
   private context: GPUCanvasContext;
@@ -75,7 +88,7 @@ export default class Engine {
   private pipeline: GPURenderPipeline;
   private getRenderPassDescriptor: RenderPassDescriptorFactory;
 
-  constructor(device: GPUDevice) {
+  private constructor(device: GPUDevice) {
     this.device = device;
     const renderContext = getGPUContext(device, { onVerticalScroll: () => {} });
     this.canvas = renderContext.canvas;
@@ -97,6 +110,17 @@ export default class Engine {
       this.canvas.width,
       this.canvas.height
     );
+  }
+
+  /**
+   * Get the single instance of the engine.
+   */
+  static async instance(): Promise<Engine> {
+    if (this.singleInstance === undefined) {
+      const device = await getGPUDevice();
+      this.singleInstance = new Engine(device);
+    }
+    return this.singleInstance;
   }
 
   public createUniform(

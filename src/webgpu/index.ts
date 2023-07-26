@@ -2,21 +2,8 @@ import { Rotation, Translation, toRadians } from "src/util";
 import Engine from "./Engine";
 import * as Body from "src/body";
 
-/**
- * Retrieve the GPU logical device.
- */
-async function getGPUDevice(): Promise<GPUDevice> {
-  const adapter = await navigator.gpu.requestAdapter();
-  if (!adapter) {
-    throw Error("Couldn't request WebGPU adapter.");
-  }
-
-  return adapter.requestDevice();
-}
-
 export async function webgpuMain() {
-  const device = await getGPUDevice();
-  const engine = new Engine(device);
+  const engine = await Engine.instance();
 
   const uniformBufferSize = 4 * 16; // 4x4 matrix
   const uniform = engine.createUniform(uniformBufferSize, 0, 0);
