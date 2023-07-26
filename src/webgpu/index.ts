@@ -1,6 +1,6 @@
-import { createCubeVertexBuffer } from "./buffer";
 import { Rotation, Translation, toRadians } from "src/util";
 import Engine from "./Engine";
+import * as Body from "src/body";
 
 /**
  * Retrieve the GPU logical device.
@@ -23,7 +23,8 @@ export async function webgpuMain() {
 
   let angle = 0;
 
-  const vertex = createCubeVertexBuffer(engine);
+  const cube = new Body.ColorCube();
+  const vertex = cube.getVertexInfo(engine);
 
   function frame() {
     const rotation: Rotation = {
