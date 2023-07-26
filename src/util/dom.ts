@@ -7,7 +7,7 @@ export interface CreateCanvasParams {
 }
 
 export function getCanvasElement(
-  params: CreateCanvasParams
+  params?: CreateCanvasParams
 ): HTMLCanvasElement | null {
   const canvas = document.getElementById(
     CANVAS_ELEMENT_ID
@@ -25,10 +25,12 @@ export function getCanvasElement(
   canvas.style.width = desiredCSSWidth + "px";
   canvas.style.height = desiredCSSHeight + "px";
 
-  canvas.addEventListener("wheel", (event) => {
-    params.onVerticalScroll(event.deltaY);
-    event.stopPropagation();
-  });
+  if (params !== undefined) {
+    canvas.addEventListener("wheel", (event) => {
+      params.onVerticalScroll(event.deltaY);
+      event.stopPropagation();
+    });
+  }
 
   return canvas;
 }

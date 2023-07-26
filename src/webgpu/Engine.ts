@@ -51,11 +51,8 @@ async function getGPUDevice(): Promise<GPUDevice> {
  *
  * Will return `null` if either the canvas element or the WebGPU context can't be found.
  */
-function getGPUContext(
-  device: GPUDevice,
-  params: CreateCanvasParams
-): RenderContext {
-  const canvas = getCanvasElement(params);
+function getGPUContext(device: GPUDevice): RenderContext {
+  const canvas = getCanvasElement();
   const context = canvas?.getContext("webgpu");
   if (!canvas) {
     throw Error("Unable to to find canvas element by id.");
@@ -92,7 +89,7 @@ export default class Engine {
 
   private constructor(device: GPUDevice) {
     this.device = device;
-    const renderContext = getGPUContext(device, { onVerticalScroll: () => {} });
+    const renderContext = getGPUContext(device);
     this.canvas = renderContext.canvas;
     this.context = renderContext.context;
     this.prefferedFormat = renderContext.prefferedFormat;
@@ -123,6 +120,13 @@ export default class Engine {
       this.singleInstance = new Engine(device);
     }
     return this.singleInstance;
+  }
+
+  /**
+   * Return the canvas DOM element.
+   */
+  public getCanvas(): HTMLCanvasElement {
+    return this.canvas;
   }
 
   /**
@@ -168,18 +172,6 @@ export default class Engine {
     );
 
     return { vertexBuffer, vertexCount: information.length / 8 };
-  }
-
-  public getTransformationMatrix(
-    rotation: Rotation,
-    translation: Translation
-  ): Float32Array {
-    return getTransformationMetrixFloatArray({
-      width: this.canvas.width,
-      height: this.canvas.height,
-      rotation,
-      translation,
-    });
   }
 
   /**

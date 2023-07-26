@@ -1,5 +1,3 @@
-import Engine from "./Engine";
-
 export interface VertexBufferInfo {
   /**
    * GPU buffer containing the vertex information
