@@ -71,6 +71,10 @@ const baseConfig = {
           },
         },
       },
+      {
+        test: /\.(wgsl|glsl|vs|fs)$/,
+        loader: 'ts-shader-loader'
+    }
     ],
   },
   devServer: {

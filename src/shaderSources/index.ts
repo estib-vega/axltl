@@ -1,7 +1,5 @@
-import * as Vertex from "./vertex";
-import * as Fragment from "./fragment";
+import * as WebGLVertex from "./webgl/vertex";
+import * as WebGLFragment from "./webgl/fragment";
+import WebGPUBasic from "./webgpu/basic.wgsl";
 
-export {
-    Vertex,
-    Fragment,
-};
+export { WebGLVertex, WebGLFragment, WebGPUBasic };

@@ -68,10 +68,10 @@ export interface ShaderProgramInfo {
 
 export function setUpShaderProgram(gl: WebGLRenderingContext): ShaderProgramInfo | null {
     // Vertex shader program
-    const vsSource = ShaderSources.Vertex.SimplePositionAndColor;
+    const vsSource = ShaderSources.WebGLVertex.SimplePositionAndColor;
 
     // Fragment shader program
-    const fsSource = ShaderSources.Fragment.SimpleColor;
+    const fsSource = ShaderSources.WebGLFragment.SimpleColor;
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
     if (shaderProgram === null) {
