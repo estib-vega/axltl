@@ -1,7 +1,7 @@
 import { Colors } from "src/util/color";
 import { VertexBufferInfo } from "./buffer";
 
-type RenderPassDescriptorFactory = (
+export type RenderPassDescriptorFactory = (
   context: GPUCanvasContext
 ) => GPURenderPassDescriptor;
 
@@ -40,29 +40,4 @@ export function getRenderPassDescriptorFactory(
     ],
     depthStencilAttachment,
   });
-}
-
-export interface RenderPassParams {
-  device: GPUDevice;
-  renderPipeline: GPURenderPipeline;
-  getRenderPassDescriptor: () => GPURenderPassDescriptor;
-  uniformBindGroup: GPUBindGroup;
-  vertex: VertexBufferInfo;
-}
-
-/**
- * Execute a render pass with the given parameters.
- */
-export function renderPass(params: RenderPassParams) {
-  const renderPassDescriptor = params.getRenderPassDescriptor();
-  const commandEncoder = params.device.createCommandEncoder();
-  const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-
-  passEncoder.setPipeline(params.renderPipeline);
-  passEncoder.setBindGroup(0, params.uniformBindGroup);
-  passEncoder.setVertexBuffer(0, params.vertex.vertexBuffer);
-  passEncoder.draw(params.vertex.vertexCount, 1, 0, 0);
-  passEncoder.end();
-
-  params.device.queue.submit([commandEncoder.finish()]);
 }
