@@ -17,6 +17,8 @@ import {
   createBoundUniformBuffer,
 } from "./buffer";
 
+const FLOAT_32_BYTE_LEN = 4;
+
 interface RenderContext {
   /**
    * Canvas element to render to.
@@ -123,20 +125,26 @@ export default class Engine {
     return this.singleInstance;
   }
 
+  /**
+   * Create a writable uniform buffer, with an indexed binding and group.
+   */
   public createUniform(
-    bufferSize: number,
-    bindGroupIndex: number,
+    size: number,
+    groupIndex: number,
     bindingIndex: number
   ): BoundUniformBuffer {
     return createBoundUniformBuffer(
       this.device,
       this.pipeline,
-      bindGroupIndex,
+      groupIndex,
       bindingIndex,
-      bufferSize
+      size * FLOAT_32_BYTE_LEN
     );
   }
 
+  /**
+   * Create vertex buffer info for the given data
+   */
   public createVertexBufferInfo(information: number[]): VertexBufferInfo {
     const vertices = new Float32Array(information);
 
@@ -174,6 +182,9 @@ export default class Engine {
     });
   }
 
+  /**
+   * Execute a render pass with the given uniform and vertex information
+   */
   public doRenderPass(
     uniform: BoundUniformBuffer,
     vertexInfo: VertexBufferInfo

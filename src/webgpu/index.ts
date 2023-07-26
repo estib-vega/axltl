@@ -5,8 +5,8 @@ import * as Body from "src/body";
 export async function webgpuMain() {
   const engine = await Engine.instance();
 
-  const uniformBufferSize = 4 * 16; // 4x4 matrix
-  const uniform = engine.createUniform(uniformBufferSize, 0, 0);
+  const uniformSize = 16; // 4x4 matrix
+  const uniform = engine.createUniform(uniformSize, 0, 0);
 
   let angle = 0;
 
