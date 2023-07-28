@@ -87,17 +87,17 @@ export default class SceneManager {
         if (this.gl === undefined) {
             throw new Error("Attempting to create matrices without WebGL rendering context!");
         }
-        const projectionMatrix = Util.createProjectionMatrix(this.gl.canvas.width, this.gl.canvas.height);
+        const projectionMatrix = Util.WebGLMat.createProjectionMatrix(this.gl.canvas.width, this.gl.canvas.height);
         this.rotationRad += Util.toRadians(deltaTime * DEGREES_PER_SECOND);
 
-        const rotation: Util.Rotation = {
+        const rotation: Util.WebGLMat.Rotation = {
             radians: this.rotationRad,
             axis: { x: 0.5, y: -1.0, z: 0 },
         }
-        const translation: Util.Translation = {
+        const translation: Util.WebGLMat.Translation = {
             vector: { x: 0, y: 0, z: this.zOffset },
         }
-        const modelViewMatrix = Util.createModelViewMatrix({ rotation, translation });
+        const modelViewMatrix = Util.WebGLMat.createModelViewMatrix({ rotation, translation });
         return { projectionMatrix, modelViewMatrix };
     }
 

@@ -1,5 +1,4 @@
 import { Colors } from "src/util/color";
-import { VertexBufferInfo } from "./buffer";
 
 export type RenderPassDescriptorFactory = (
   context: GPUCanvasContext

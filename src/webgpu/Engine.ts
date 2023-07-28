@@ -1,10 +1,4 @@
-import {
-  CreateCanvasParams,
-  Rotation,
-  Translation,
-  getCanvasElement,
-  getTransformationMetrixFloatArray,
-} from "src/util";
+import { getCanvasElement } from "src/util";
 import * as ShaderSources from "src/shaderSources";
 import { createRenderPipeline } from "./pipeline";
 import {

@@ -29,6 +29,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
-    "gl-matrix": "^3.4.3"
+    "gl-matrix": "^3.4.3",
+    "wgpu-matrix": "^2.4.2"
   }
 }

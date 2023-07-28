@@ -1,8 +1,7 @@
 import {
-  Rotation,
-  Translation,
   Vec3,
-  getTransformationMetrixFloatArray,
+  WebGPUMat,
+  WebGLMat,
   toRadians,
 } from "src/util";
 import Engine from "./Engine";
@@ -51,15 +50,15 @@ export default class World {
   private getTransformationMatrix(): Float32Array {
     const canvas = this.engine.getCanvas();
 
-    const rotation: Rotation = {
+    const rotation: WebGPUMat.Rotation = {
       radians: toRadians(this.rotationAngle),
       axis: this.rotationAxis,
     };
-    const translation: Translation = {
+    const translation: WebGPUMat.Translation = {
       vector:  this.translationVector,
     };
 
-    return getTransformationMetrixFloatArray({
+    return WebGPUMat.getTransformationMetrixFloatArray({
       width: canvas.width,
       height: canvas.height,
       rotation,
