@@ -1,9 +1,4 @@
-import {
-  Vec3,
-  WebGPUMat,
-  WebGLMat,
-  toRadians,
-} from "src/util";
+import { Vec3, WebGPUMat, WebGLMat, toRadians } from "src/util";
 import Engine from "./Engine";
 import { BoundUniformBuffer } from "./buffer";
 import * as Body from "src/body";
@@ -23,8 +18,8 @@ export default class World {
     this.engine = engine;
 
     this.rotationAngle = 0;
-    this.rotationAxis = { x: 0, y: -1.0, z: 0.7 };
-    this.translationVector = { x: 0, y: 0, z: -7 };
+    this.rotationAxis = { x: 0, y: -1.0, z: 0.0 };
+    this.translationVector = { x: 0, y: 0, z: -17 };
 
     this.transformMatrixUniform = engine.createUniform(
       TRANSFORMATION_MATRIX_SIZE,
@@ -55,7 +50,7 @@ export default class World {
       axis: this.rotationAxis,
     };
     const translation: WebGPUMat.Translation = {
-      vector:  this.translationVector,
+      vector: this.translationVector,
     };
 
     return WebGPUMat.getTransformationMetrixFloatArray({
@@ -78,13 +73,27 @@ export default class World {
    * Start render loop.
    */
   public show() {
-    const cube = new Body.ColorCube();
-    const vertex = cube.getVertexInfo(this.engine);
+    const cube1 = new Body.ColorCube();
+    cube1.position({ x: -2, y: 0, z: 0 });
+    const cube2 = new Body.ColorCube();
+    cube2.position({ x: 2, y: 0, z: 0 });
+    const renderable1 = cube1.getRenderable(this.engine);
+    const renderabl2 = cube2.getRenderable(this.engine);
+
+    const cubes = [cube1, cube2];
+    const renderables = [renderable1, renderabl2];
+
+    const rotationVelocity = 1;
 
     const frame = () => {
       this.updateTransformMatrixUniform();
-      this.engine.doRenderPass(this.transformMatrixUniform, vertex);
-      this.rotationAngle += 3;
+      cube1.rotate(rotationVelocity, { x: 1, y: 0, z: 0 });
+      cube2.rotate(rotationVelocity, { x: 0, y: 0, z: 1 });
+      for (const cube of cubes) {
+        cube.update();
+      }
+      this.engine.doRenderPass(this.transformMatrixUniform, renderables);
+      this.rotationAngle += 0.5;
       requestAnimationFrame(frame);
     };
     requestAnimationFrame(frame);

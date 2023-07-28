@@ -3,6 +3,7 @@ import * as ShaderSources from "src/shaderSources";
 import { createRenderPipeline } from "./pipeline";
 import {
   RenderPassDescriptorFactory,
+  Renderable,
   getRenderPassDescriptorFactory,
 } from "./renderPass";
 import {
@@ -172,19 +173,23 @@ export default class Engine {
    * Execute a render pass with the given uniform and vertex information
    */
   public doRenderPass(
-    uniform: BoundUniformBuffer,
-    vertexInfo: VertexBufferInfo
+    transformUniform: BoundUniformBuffer,
+    renderables: Renderable[]
   ) {
     const commandEncoder = this.device.createCommandEncoder();
     const renderPassDescriptor = this.getRenderPassDescriptor(this.context);
     const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
 
     passEncoder.setPipeline(this.pipeline);
-    passEncoder.setBindGroup(0, uniform.bindGroup);
-    passEncoder.setVertexBuffer(0, vertexInfo.vertexBuffer);
-    passEncoder.draw(vertexInfo.vertexCount, 1, 0, 0);
-    passEncoder.end();
+    passEncoder.setBindGroup(0, transformUniform.bindGroup);
 
+    for (const renderable of renderables) {
+      passEncoder.setBindGroup(1, renderable.modelUniform.bindGroup);
+      passEncoder.setVertexBuffer(0, renderable.vertexInfo.vertexBuffer);
+      passEncoder.draw(renderable.vertexInfo.vertexCount, 1, 0, 0);
+    }
+
+    passEncoder.end();
     this.device.queue.submit([commandEncoder.finish()]);
   }
 }
