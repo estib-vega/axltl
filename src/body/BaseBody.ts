@@ -3,6 +3,26 @@ import Engine from "src/webgpu/Engine";
 import { Renderable } from "src/webgpu/renderPass";
 
 const MODEL_MATRIX_SIZE = 4 * 4;
+const INITIAL_POS: Vec3 = { x: 0, y: 0, z: 0 };
+const INITIAL_ROT_ANGLE = 0;
+const INITIAL_ROT_AXIS: Vec3 = { x: 1, y: 0, z: 0 };
+
+/**
+ * Returns the model view matrix.
+ */
+function initializeModelMatrix(): WebGPUMat.M4 {
+  const translation: WebGPUMat.Translation = {
+    vector: INITIAL_POS,
+  };
+  const rotation: WebGPUMat.Rotation = {
+    radians: toRadians(INITIAL_ROT_ANGLE),
+    axis: INITIAL_ROT_AXIS,
+  };
+  return WebGPUMat.createModelViewMatrix({
+    translation,
+    rotation,
+  });
+}
 
 /**
  * Object body.
@@ -12,19 +32,14 @@ const MODEL_MATRIX_SIZE = 4 * 4;
 export default class BaseBody {
   private name: string;
   private mesh: number[];
-  private rotationAngle: number;
-  private rotationAxis: Vec3;
-  private translationVector: Vec3;
-
+  private modelMatrix: WebGPUMat.M4;
   private renderable: Renderable | undefined = undefined;
 
   constructor(name: string, mesh: number[]) {
     this.name = name;
     this.mesh = mesh;
 
-    this.rotationAngle = 0;
-    this.rotationAxis = { x: 1, y: 0, z: 0 };
-    this.translationVector = { x: 0, y: 0, z: 0 };
+    this.modelMatrix = initializeModelMatrix();
   }
 
   update() {
@@ -34,29 +49,19 @@ export default class BaseBody {
       );
     }
 
-    const translation: WebGPUMat.Translation = {
-      vector: this.translationVector,
-    };
-    const rotation: WebGPUMat.Rotation = {
-      radians: toRadians(this.rotationAngle),
-      axis: this.rotationAxis,
-    };
-    const modelMatrix = WebGPUMat.createModelViewMatrix({
-      translation,
-      rotation,
-    });
-
-    const modelValues = new Float32Array(modelMatrix.values());
+    const modelValues = new Float32Array(this.modelMatrix.values());
     this.renderable.modelUniform.write(modelValues);
   }
 
   rotate(angle: number, axis: Vec3) {
-    this.rotationAngle += angle;
-    this.rotationAxis = axis;
+    WebGPUMat.rotateInplace(this.modelMatrix, {
+      radians: toRadians(angle),
+      axis,
+    });
   }
 
-  position(position: Vec3) {
-    this.translationVector = position;
+  translate(position: Vec3) {
+    WebGPUMat.translateInplace(this.modelMatrix, { vector: position });
   }
 
   getRenderable(engine: Engine): Renderable {

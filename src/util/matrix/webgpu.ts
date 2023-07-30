@@ -4,6 +4,15 @@ import { Mat4, mat4 } from "wgpu-matrix";
 
 const FOV_ANGLE = 45;
 
+export type M4 = Mat4;
+
+/**
+ * Create an identity matrix
+ */
+export function createMatrix4(): M4 {
+  return mat4.identity();
+}
+
 /**
  * Create a perspective matrix, a special matrix that is
  * used to simulate the distortion of perspective in a camera.
@@ -11,7 +20,7 @@ const FOV_ANGLE = 45;
 export function createProjectionMatrix(
   width: number,
   height: number
-): Mat4 {
+): M4 {
   // Our field of view is 45 degrees, with a width/height
   // ratio that matches the display size of the canvas
   // and we only want to see objects between 0.1 units
@@ -44,30 +53,33 @@ export interface Translation {
 }
 
 export interface ModelViewMatrixParams {
+  target?: M4;
   translation: Translation;
   rotation: Rotation;
 }
 
-export function createModelViewMatrix(params: ModelViewMatrixParams): Mat4 {
-  // Set the drawing position to the "identity" point, which is
-  // the center of the scene.
-  const modelViewMatrix = mat4.identity();
-
-  // Now move the drawing position a bit to where we want to
-  // start drawing the square.
-
-  mat4.translate(
-    modelViewMatrix, // matrix to translate
-    vec2Array(params.translation.vector),
-    modelViewMatrix // destination matrix
-  ); // amount to translate
-
+export function rotateInplace(matrix: M4, params: Rotation) {
   mat4.rotate(
-    modelViewMatrix,
-    vec2Array(params.rotation.axis),
-    params.rotation.radians,
-    modelViewMatrix,
+    matrix,
+    vec2Array(params.axis),
+    params.radians,
+    matrix,
   );
+}
+
+export function translateInplace(matrix: M4, params: Translation) {
+  mat4.translate(
+    matrix, // matrix to translate
+    vec2Array(params.vector),
+    matrix // destination matrix
+  ); // amount to translate
+}
+
+export function createModelViewMatrix(params: ModelViewMatrixParams): M4 {
+  const modelViewMatrix = params.target ?? createMatrix4();
+
+  translateInplace(modelViewMatrix, params.translation);
+  rotateInplace(modelViewMatrix, params.rotation);
 
   return modelViewMatrix;
 }
@@ -77,6 +89,7 @@ export function createModelViewMatrix(params: ModelViewMatrixParams): Mat4 {
 // TRANSFORMATION MATRIX
 
 interface TransformationMatrixParams {
+  target?: M4;
   width: number;
   height: number;
   rotation: Rotation;
@@ -84,19 +97,27 @@ interface TransformationMatrixParams {
 }
 
 /**
- * Create the transformation matrix for the given parameters.
- *
- * @returns {Float32Array} Will return the matrix information as a `Float32Array`.
+ * Create the transformation matrix for the given parameters..
  */
-export function getTransformationMetrixFloatArray(
+export function getTransformationMatrix(
   params: TransformationMatrixParams
-): Float32Array {
-  const { width, height, rotation, translation } = params;
+): M4 {
+  const { width, height, rotation, translation, target } = params;
   const projectionMatrix = createProjectionMatrix(width, height);
-  const modelViewMatrix = createModelViewMatrix({ rotation, translation });
+  const modelViewMatrix = createModelViewMatrix({ rotation, translation, target });
 
   const modelViewProjectionMatrix = mat4.create();
   mat4.multiply(projectionMatrix, modelViewMatrix, modelViewProjectionMatrix);
 
-  return new Float32Array(modelViewProjectionMatrix.values());
+  return modelViewProjectionMatrix;
+}
+/**
+ * Create the transformation matrix for the given parameters.
+ *
+ * @returns {Float32Array} Will return the matrix information as a `Float32Array`.
+ */
+export function getTransformationMatrixFloatArray(
+  params: TransformationMatrixParams
+): Float32Array {
+  return new Float32Array(getTransformationMatrix(params).values());
 }

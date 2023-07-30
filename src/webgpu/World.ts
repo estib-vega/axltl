@@ -5,6 +5,9 @@ import BaseBody from "src/body/BaseBody";
 import { Renderable } from "./renderPass";
 
 const TRANSFORMATION_MATRIX_SIZE = 4 * 4;
+const INITIAL_POS: Vec3 = { x: 0, y: 0, z: -25 };
+const INITIAL_ROT_ANGLE = 0;
+const INITIAL_ROT_AXIS: Vec3 = { x: 1, y: 0, z: 0 };
 
 interface BeforeUpdateCallbackParams {
   readonly bodies: BaseBody[];
@@ -15,10 +18,8 @@ type BeforeUpdateCallback = (params: BeforeUpdateCallbackParams) => void;
 export default class World {
   private static singleInstance: World | undefined = undefined;
 
-  private rotationAngle: number;
-  private rotationAxis: Vec3;
-  private translationVector: Vec3;
   private engine: Engine;
+  private transformMatrix: WebGPUMat.M4;
   private transformMatrixUniform: BoundUniformBuffer;
 
   private bodies: Set<BaseBody>;
@@ -26,9 +27,7 @@ export default class World {
   private constructor(engine: Engine) {
     this.engine = engine;
 
-    this.rotationAngle = 0;
-    this.rotationAxis = { x: 0, y: -1.0, z: 0.0 };
-    this.translationVector = { x: 0, y: 0, z: -20 };
+    this.transformMatrix = this.initTransformationMatrix(INITIAL_ROT_ANGLE, INITIAL_ROT_AXIS, INITIAL_POS);
 
     this.transformMatrixUniform = engine.createUniform(
       TRANSFORMATION_MATRIX_SIZE,
@@ -51,25 +50,36 @@ export default class World {
   }
 
   /**
-   * Get the transformation matrix given the current rotation and translation.
+   * Returns the transformation matrix.
    */
-  private getTransformationMatrix(): Float32Array {
+  private initTransformationMatrix(
+    rotationAngle: number,
+    rotationAxis: Vec3,
+    translationVector: Vec3
+  ): WebGPUMat.M4 {
     const canvas = this.engine.getCanvas();
 
     const rotation: WebGPUMat.Rotation = {
-      radians: toRadians(this.rotationAngle),
-      axis: this.rotationAxis,
+      radians: toRadians(rotationAngle),
+      axis: rotationAxis,
     };
     const translation: WebGPUMat.Translation = {
-      vector: this.translationVector,
+      vector: translationVector,
     };
 
-    return WebGPUMat.getTransformationMetrixFloatArray({
+    return WebGPUMat.getTransformationMatrix({
       width: canvas.width,
       height: canvas.height,
       rotation,
       translation,
     });
+  }
+
+  /**
+   * Get the transformation matrix as an array of float 32.
+   */
+  private getTransformationMatrix(): Float32Array {
+    return new Float32Array(this.transformMatrix);
   }
 
   /**
@@ -114,14 +124,17 @@ export default class World {
    * Add to the rotation angle
    */
   rotate(angle: number, axis: Vec3) {
-    this.rotationAngle += angle;
-    if (this.rotationAngle > 360) {
-      this.rotationAngle -= 360;
-    }
-    if (this.rotationAngle < 0) {
-      this.rotationAngle = 360 - this.rotationAngle;
-    }
-    this.rotationAxis = axis;
+    WebGPUMat.rotateInplace(this.transformMatrix, {
+      radians: toRadians(angle),
+      axis,
+    });
+  }
+
+  /**
+   * Translate the position
+   */
+  translate(position: Vec3) {
+    WebGPUMat.translateInplace(this.transformMatrix, { vector: position });
   }
 
   /**
