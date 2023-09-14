@@ -1,6 +1,6 @@
 {
   "name": "axltl",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "index.js",
   "author": "estib <stron@me.com>",
   "license": "MIT",
@@ -9,7 +9,7 @@
     "build": "webpack --config-name production"
   },
   "repository": {
-    "url": "https://github.com/estib-vega/quetzal"
+    "url": "https://github.com/estib-vega/axltl"
   },
   "devDependencies": {
     "@types/gl-matrix": "^3.2.0",
