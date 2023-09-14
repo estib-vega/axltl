@@ -1,28 +1,9 @@
 import { Vec3, WebGPUMat, toRadians } from "src/util";
 import Engine from "src/webgpu/Engine";
 import { Renderable } from "src/webgpu/renderPass";
+import { BodyId, createBodyId } from "./id";
+import { BodyType, MODEL_MATRIX_SIZE, initializeModelMatrix } from "./base";
 
-const MODEL_MATRIX_SIZE = 4 * 4;
-const INITIAL_POS: Vec3 = { x: 0, y: 0, z: 0 };
-const INITIAL_ROT_ANGLE = 0;
-const INITIAL_ROT_AXIS: Vec3 = { x: 1, y: 0, z: 0 };
-
-/**
- * Returns the model view matrix.
- */
-function initializeModelMatrix(): WebGPUMat.M4 {
-  const translation: WebGPUMat.Translation = {
-    vector: INITIAL_POS,
-  };
-  const rotation: WebGPUMat.Rotation = {
-    radians: toRadians(INITIAL_ROT_ANGLE),
-    axis: INITIAL_ROT_AXIS,
-  };
-  return WebGPUMat.createModelViewMatrix({
-    translation,
-    rotation,
-  });
-}
 
 /**
  * Object body.
@@ -31,15 +12,21 @@ function initializeModelMatrix(): WebGPUMat.M4 {
  */
 export default class BaseBody {
   private name: string;
+  private id: BodyId<BodyType>;
   private mesh: number[];
   private modelMatrix: WebGPUMat.M4;
   private renderable: Renderable | undefined = undefined;
 
-  constructor(name: string, mesh: number[]) {
-    this.name = name;
+  constructor(name: string | undefined, type: BodyType, mesh: number[]) {
+    this.name = name ?? type;
+    this.id = createBodyId("", type);
     this.mesh = mesh;
 
     this.modelMatrix = initializeModelMatrix();
+  }
+
+  getId(): BodyId<BodyType> {
+    return this.id;
   }
 
   update() {

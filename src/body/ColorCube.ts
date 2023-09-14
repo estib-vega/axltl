@@ -1,10 +1,9 @@
 import * as Mesh from "src/meshes";
 import BaseBody from "./BaseBody";
-
-const NAME = "ColorCube";
+import { BodyType } from "./base";
 
 export class ColorCube extends BaseBody {
-  constructor() {
-    super(NAME, Mesh.Cube.ColorCube);
+  constructor(name?: string) {
+    super(name, BodyType.ColorCube, Mesh.Cube.ColorCube);
   }
 }
