@@ -1,4 +1,6 @@
-# Quetzal
+# axltl
+
+Pronounced 'Axolotl'
 
 A simple rendering engine using WebGPU.
 
