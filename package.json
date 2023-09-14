@@ -7,6 +7,9 @@
   "scripts": {
     "start": "webpack-dev-server --mode development --config-name development"
   },
+  "repository": {
+    "url": "https://github.com/estib-vega/quetzal"
+  },
   "devDependencies": {
     "@types/gl-matrix": "^3.2.0",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
