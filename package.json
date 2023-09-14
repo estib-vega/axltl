@@ -5,7 +5,8 @@
   "author": "estib <stron@me.com>",
   "license": "MIT",
   "scripts": {
-    "start": "webpack-dev-server --mode development --config-name development"
+    "start": "webpack-dev-server --mode development --config-name development",
+    "build": "webpack --config-name production"
   },
   "repository": {
     "url": "https://github.com/estib-vega/quetzal"

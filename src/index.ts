@@ -1,5 +1,5 @@
 import { webglMain } from "./webgl";
-import { webgpuMain } from "./webgpu";
+import { webgpuMain, World, Body } from "./webgpu";
 
 function main() {
   if (!navigator.gpu) {
@@ -10,3 +10,5 @@ function main() {
 }
 
 window.onload = main;
+
+export { World, Body };

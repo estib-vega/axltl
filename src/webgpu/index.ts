@@ -29,3 +29,8 @@ export async function webgpuMain() {
   });
 
 }
+
+export {
+  World,
+  Body,
+}
