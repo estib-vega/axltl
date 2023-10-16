@@ -1,4 +1,4 @@
-import { Vec3, WebGPUMat, toRadians } from "src/util";
+import { type Vec3, WebGPUMat, toRadians } from "src/util";
 
 export const MODEL_MATRIX_SIZE = 4 * 4;
 export const INITIAL_POS: Vec3 = { x: 0, y: 0, z: 0 };

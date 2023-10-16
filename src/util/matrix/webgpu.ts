@@ -1,6 +1,6 @@
 import { toRadians } from "../math";
-import { Vec3, vec2Array } from "../vector";
-import { Mat4, mat4 } from "wgpu-matrix";
+import { type Vec3, vec2Array } from "../vector";
+import { type Mat4, mat4 } from "wgpu-matrix";
 
 const FOV_ANGLE = 45;
 

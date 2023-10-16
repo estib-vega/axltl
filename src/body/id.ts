@@ -1,4 +1,4 @@
-import { Branded } from "src/util";
+import type { Branded } from "src/util";
 
 export type BodyId<B extends string> = Branded<string, B>;
 

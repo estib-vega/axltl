@@ -1,6 +1,6 @@
 import * as Util from "../util";
-import { PrimitiveBuffers } from "./buffer";
-import { ShaderProgramInfo } from "./shader";
+import type { PrimitiveBuffers } from "./buffer";
+import type { ShaderProgramInfo } from "./shader";
 import { mat4 } from "gl-matrix";
 
 const DEGREES_PER_SECOND = 100;

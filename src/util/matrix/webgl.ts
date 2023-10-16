@@ -1,6 +1,6 @@
 import { mat4 } from "gl-matrix";
 import { toRadians } from "../math";
-import { Vec3, vec2Array } from "../vector";
+import { type Vec3, vec2Array } from "../vector";
 
 const FOV_ANGLE = 45;
 

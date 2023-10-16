@@ -6,14 +6,12 @@ const { Configuration } = require("webpack");
  */
 const baseConfig = {
   target: "web",
-  entry: [
-    path.resolve(__dirname, "./src/html/index.html"),
-    path.resolve(__dirname, "./src/index.ts"),
-    path.resolve(__dirname, "./src/css/index.css"),
-  ],
+  entry: path.resolve(__dirname, "./src/index.ts"),
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: path.resolve(__dirname, "./build"),
     filename: "index.js",
+    libraryTarget: "umd",
+    globalObject: 'this',
   },
   resolve: {
     plugins: [
@@ -73,8 +71,8 @@ const baseConfig = {
       },
       {
         test: /\.(wgsl|glsl|vs|fs)$/,
-        loader: 'ts-shader-loader'
-    }
+        loader: "ts-shader-loader",
+      },
     ],
   },
   devServer: {
@@ -95,7 +93,12 @@ const baseConfig = {
 };
 
 module.exports = [
-  { ...baseConfig, name: "development", mode: "none", devtool: "source-map" },
+  {
+    ...baseConfig,
+    name: "development",
+    mode: "none",
+    devtool: "source-map",
+  },
   {
     ...baseConfig,
     name: "production",

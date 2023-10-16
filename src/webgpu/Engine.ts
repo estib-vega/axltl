@@ -2,13 +2,13 @@ import { getCanvasElement } from "src/util";
 import * as ShaderSources from "src/shaderSources";
 import { createRenderPipeline } from "./pipeline";
 import {
-  RenderPassDescriptorFactory,
-  Renderable,
+  type RenderPassDescriptorFactory,
+  type Renderable,
   getRenderPassDescriptorFactory,
 } from "./renderPass";
 import {
-  BoundUniformBuffer,
-  VertexBufferInfo,
+  type BoundUniformBuffer,
+  type VertexBufferInfo,
   createBoundUniformBuffer,
 } from "./buffer";
 

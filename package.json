@@ -1,12 +1,13 @@
 {
   "name": "axltl",
-  "version": "0.1.1",
-  "main": "index.js",
+  "version": "0.1.2",
+  "main": "build/index.js",
   "author": "estib <stron@me.com>",
   "license": "MIT",
   "scripts": {
+    "clean": "rm -rf build",
     "start": "webpack-dev-server --mode development --config-name development",
-    "build": "webpack --config-name production"
+    "build": "npm run clean && webpack --config-name production"
   },
   "repository": {
     "url": "https://github.com/estib-vega/axltl"

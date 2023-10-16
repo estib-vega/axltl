@@ -1,9 +1,8 @@
-import { Vec3, WebGPUMat, toRadians } from "src/util";
+import { WebGPUMat, toRadians, type Vec3 } from "src/util";
 import Engine from "src/webgpu/Engine";
-import { Renderable } from "src/webgpu/renderPass";
-import { BodyId, createBodyId } from "./id";
+import type { Renderable } from "src/webgpu/renderPass";
+import { type BodyId, createBodyId } from "./id";
 import { BodyType, MODEL_MATRIX_SIZE, initializeModelMatrix } from "./base";
-
 
 /**
  * Object body.

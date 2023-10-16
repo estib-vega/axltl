@@ -1,8 +1,8 @@
-import { Vec3, WebGPUMat, toRadians } from "src/util";
+import { type Vec3, WebGPUMat, toRadians } from "src/util";
 import Engine from "./Engine";
-import { BoundUniformBuffer } from "./buffer";
+import type { BoundUniformBuffer } from "./buffer";
 import BaseBody from "src/body/BaseBody";
-import { Renderable } from "./renderPass";
+import type { Renderable } from "./renderPass";
 
 const TRANSFORMATION_MATRIX_SIZE = 4 * 4;
 const INITIAL_POS: Vec3 = { x: 0, y: 0, z: -25 };

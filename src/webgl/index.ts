@@ -1,4 +1,4 @@
-import { CreateCanvasParams, getCanvasElement } from "src/util/dom";
+import { type CreateCanvasParams, getCanvasElement } from "src/util/dom";
 import { createCubePrimitiveBuffers } from "./buffer";
 import SceneManager from "./scene";
 import { setUpShaderProgram } from "./shader";

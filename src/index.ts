@@ -1,14 +1,2 @@
-import { webglMain } from "./webgl";
-import { webgpuMain, World, Body } from "./webgpu";
-
-function main() {
-  if (!navigator.gpu) {
-    webglMain();
-  } else {
-    webgpuMain();
-  }
-}
-
-window.onload = main;
-
+import { World, Body } from "./webgpu";
 export { World, Body };

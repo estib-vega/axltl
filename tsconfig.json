@@ -1,12 +1,20 @@
 {
   "compilerOptions": {
-    "outDir": "./build/",
-    "sourceMap": true,
-    "module": "commonjs",
-    "target": "es2017",
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
+    "moduleDetection": "force",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "moduleResolution": "Bundler",
+    "module": "ESNext",
+    "outDir": "build",
     "jsx": "react",
     "noImplicitAny": true,
-    "declaration": true,
     "strictNullChecks": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -14,6 +22,7 @@
     "downlevelIteration": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "typeRoots": ["./node_modules/@webgpu/types", "./node_modules/@types"]
-  }
+    "typeRoots": ["./node_modules/@webgpu/types", "./node_modules/@types"],
+  },
+  "include": ["src"]
 }

@@ -1,5 +1,5 @@
 import { Colors } from "src/util/color";
-import { BoundUniformBuffer, VertexBufferInfo } from "./buffer";
+import type { BoundUniformBuffer, VertexBufferInfo } from "./buffer";
 
 export interface Renderable {
   modelUniform: BoundUniformBuffer,
