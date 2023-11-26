@@ -50,6 +50,14 @@ export default class World {
   }
 
   /**
+   * Destroy the world instance to be recreated later.
+   */
+  static destroy() {
+    Engine.destroy();
+    this.singleInstance = undefined;
+  }
+
+  /**
    * Returns the transformation matrix.
    */
   private initTransformationMatrix(

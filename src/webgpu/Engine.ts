@@ -118,6 +118,14 @@ export default class Engine {
   }
 
   /**
+   * Destroy the engine instance to enable recreation later
+   */
+  static destroy() {
+    this.singleInstance?.device.destroy();
+    this.singleInstance = undefined;
+  }
+
+  /**
    * Return the canvas DOM element.
    */
   public getCanvas(): HTMLCanvasElement {
